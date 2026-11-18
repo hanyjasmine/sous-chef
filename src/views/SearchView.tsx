@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { ChatPanel } from "@/components/chat";
 import { NavBar } from "@/components/navigation";
 import { ResultList } from "@/components/results";
@@ -11,12 +12,10 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { copy } from "@/data/copy";
 import { useAuth } from "@/hooks/useAuth";
 import { useSavedRecipes } from "@/hooks/useSavedRecipes";
 import { ApiError, getSearchSession } from "@/lib/api";
 import { takePendingAction } from "@/lib/pendingAction";
-import { cn } from "@/lib/utils";
 import type { ChatMessage, Recipe, SearchSession } from "@/types";
 
 interface SearchViewProps {
@@ -25,6 +24,7 @@ interface SearchViewProps {
 
 export function SearchView({ params }: SearchViewProps) {
   const { sessionId } = use(params);
+  const { t } = useTranslation();
   const { user, requireAuth } = useAuth();
   const { recipes: savedRecipes, savedIds, save, unsave } = useSavedRecipes();
 
@@ -43,21 +43,21 @@ export function SearchView({ params }: SearchViewProps) {
         // the query is the first message, sous greets back
         setMessages([
           { id: "q", role: "user", content: s.query },
-          { id: "greet", role: "assistant", content: copy.greeting(s.query) },
+          { id: "greet", role: "assistant", content: t("chat.greeting", { query: s.query }) },
         ]);
       })
       .catch((e) => {
         if (cancelled) return;
         setError(
           e instanceof ApiError && e.status === 404
-            ? copy.sessionExpired
-            : copy.sessionLoadFailed,
+            ? t("search.sessionExpired")
+            : t("search.sessionLoadFailed"),
         );
       });
     return () => {
       cancelled = true;
     };
-  }, [sessionId]);
+  }, [sessionId, t]);
 
   function handleSend(text: string) {
     setMessages((m) => [
@@ -69,7 +69,7 @@ export function SearchView({ params }: SearchViewProps) {
     setTimeout(() => {
       setMessages((m) => [
         ...m,
-        { id: crypto.randomUUID(), role: "assistant", content: copy.mockReply },
+        { id: crypto.randomUUID(), role: "assistant", content: t("chat.mockReply") },
       ]);
       setPending(false);
     }, 600);
@@ -95,12 +95,14 @@ export function SearchView({ params }: SearchViewProps) {
     <ResultList
       heading={
         session ? (
-          <>
-            {session.recipes.length} recipes for{" "}
-            <span className="text-foreground">&ldquo;{session.query}&rdquo;</span>
-          </>
+          <Trans
+            i18nKey="search.heading"
+            count={session.recipes.length}
+            values={{ query: session.query }}
+            components={{ query: <span className="text-foreground" /> }}
+          />
         ) : (
-          "Searching…"
+          t("search.searching")
         )
       }
       recipes={session?.recipes ?? null}
@@ -119,7 +121,7 @@ export function SearchView({ params }: SearchViewProps) {
         <main className="flex flex-1 flex-col items-center justify-center gap-4 px-4 text-center">
           <p className="max-w-sm text-muted-foreground">{error}</p>
           <Button nativeButton={false} render={<Link href="/" />}>
-            Start a new search
+            {t("search.startNew")}
           </Button>
         </main>
       </div>
@@ -151,10 +153,10 @@ export function SearchView({ params }: SearchViewProps) {
               key={tab}
               size="sm"
               variant={mobileTab === tab ? "secondary" : "ghost"}
-              className={cn("flex-1 capitalize")}
+              className="flex-1"
               onClick={() => setMobileTab(tab)}
             >
-              {tab}
+              {t(`search.tabs.${tab}`)}
             </Button>
           ))}
         </div>

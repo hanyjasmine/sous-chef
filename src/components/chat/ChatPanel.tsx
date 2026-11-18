@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import type { ChatMessage as ChatMessageType } from "@/types";
 import { ChatInput } from "./ChatInput";
 import { ChatMessage } from "./ChatMessage";
+import { useTranslation } from "react-i18next";
 
 interface ChatPanelProps {
   messages: ChatMessageType[];
@@ -12,6 +13,7 @@ interface ChatPanelProps {
 }
 
 export function ChatPanel({ messages, pending, onSend }: ChatPanelProps) {
+  const { t } = useTranslation();
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // keep the latest message in view
@@ -26,7 +28,7 @@ export function ChatPanel({ messages, pending, onSend }: ChatPanelProps) {
           <ChatMessage key={m.id} message={m} />
         ))}
         {pending && (
-          <div className="flex gap-1 px-2 py-3" aria-label="Sous is typing">
+          <div className="flex gap-1 px-2 py-3" aria-label={t("chat.typing")}>
             {[0, 1, 2].map((i) => (
               <span
                 key={i}

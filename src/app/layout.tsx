@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { DM_Sans, Fraunces, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/components/auth";
+import { I18nProvider } from "@/components/I18nProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import en from "@/locales/en.json";
 import "./globals.css";
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
@@ -21,8 +23,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sous",
-  description: "Find recipes by describing what you're craving.",
+  // server component, so read the locale file directly instead of useTranslation
+  title: en.meta.title,
+  description: en.meta.description,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -40,9 +43,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col bg-background text-foreground">
         {/* cream-first brand, dark tokens stay in globals.css for a future toggle */}
         <ThemeProvider attribute="class" forcedTheme="light" enableSystem={false}>
-          <TooltipProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </TooltipProvider>
+          <I18nProvider>
+            <TooltipProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </TooltipProvider>
+          </I18nProvider>
           <Toaster />
         </ThemeProvider>
       </body>

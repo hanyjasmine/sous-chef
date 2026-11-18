@@ -1,6 +1,7 @@
+// i18n keys, the text lives in locales/en.json
 export const suggestions = [
-  "cozy vegetarian dinner under 30 minutes",
-  "brown butter chocolate chip cookies",
-  "something spicy with the chicken thighs in my fridge",
-  "a make-ahead brunch for 8 people",
-];
+  "landing.suggestions.cozyDinner",
+  "landing.suggestions.cookies",
+  "landing.suggestions.spicyChicken",
+  "landing.suggestions.brunch",
+] as const;

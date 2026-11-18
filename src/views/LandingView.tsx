@@ -1,15 +1,18 @@
+"use client";
+
 import Image from "next/image";
+import { Trans, useTranslation } from "react-i18next";
 import { LandingAuth, LandingBackdrop, SearchBar } from "@/components/landing";
-import { copy } from "@/data/copy";
 
 export function LandingView() {
+  const { t } = useTranslation();
   return (
     <main className="relative isolate flex flex-1 flex-col items-center justify-center overflow-hidden px-4 py-16">
       <LandingBackdrop />
       <div className="flex w-full max-w-2xl flex-col items-center gap-8">
         <div className="flex flex-col items-center gap-3 text-center">
           <h1 className="flex items-center gap-3 font-heading text-6xl font-semibold tracking-tight [font-variation-settings:'SOFT'_100,'WONK'_1] sm:gap-4 sm:text-7xl">
-            Sous
+            {t("brand")}
             <Image
               src="/tomato.png"
               alt=""
@@ -20,11 +23,12 @@ export function LandingView() {
             />
           </h1>
           <p className="text-xl text-muted-foreground">
-            {copy.tagline.before}
-            <span className="font-heading text-highlight italic">
-              {copy.tagline.accent}
-            </span>
-            {copy.tagline.after}
+            <Trans
+              i18nKey="landing.tagline"
+              components={{
+                accent: <span className="font-heading text-highlight italic" />,
+              }}
+            />
           </p>
         </div>
         <SearchBar />

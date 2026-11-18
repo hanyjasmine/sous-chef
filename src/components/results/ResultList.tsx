@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { copy } from "@/data/copy";
 import type { Recipe } from "@/types";
 import { RecipeCard } from "./RecipeCard";
 import { RecipeFullscreen } from "./RecipeFullscreen";
@@ -21,8 +21,9 @@ export function ResultList({
   recipes,
   savedIds,
   onToggleSave,
-  emptyMessage = copy.noResults,
+  emptyMessage,
 }: ResultListProps) {
+  const { t } = useTranslation();
   const [fullscreen, setFullscreen] = useState<Recipe | null>(null);
 
   return (
@@ -34,7 +35,7 @@ export function ResultList({
         <div className="flex flex-col gap-3 p-4">
           {recipes?.length === 0 && (
             <p className="py-12 text-center text-sm text-muted-foreground">
-              {emptyMessage}
+              {emptyMessage ?? t("search.noResults")}
             </p>
           )}
           {recipes
@@ -53,15 +54,19 @@ export function ResultList({
           {/* backlink required by the spoonacular free plan */}
           {recipes?.some((r) => r.source === "spoonacular") && (
             <p className="pt-2 text-center text-xs text-muted-foreground">
-              Recipe data from{" "}
-              <a
-                href="https://spoonacular.com/food-api"
-                target="_blank"
-                rel="noreferrer"
-                className="underline underline-offset-4"
-              >
-                spoonacular
-              </a>
+              <Trans
+                i18nKey="search.attribution"
+                components={{
+                  link: (
+                    <a
+                      href="https://spoonacular.com/food-api"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline underline-offset-4"
+                    />
+                  ),
+                }}
+              />
             </p>
           )}
         </div>

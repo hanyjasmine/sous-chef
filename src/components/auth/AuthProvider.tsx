@@ -10,6 +10,7 @@ import {
 } from "@/lib/pendingAction";
 import { getSupabase } from "@/lib/supabase/client";
 import { AuthDialog } from "./AuthDialog";
+import { useTranslation } from "react-i18next";
 
 export type AuthProviderName = "google";
 
@@ -42,6 +43,7 @@ function toAuthUser(user: User | null | undefined): AuthUser | null {
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [ready, setReady] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -63,13 +65,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     });
-    if (error) toast.error("Couldn't start sign-in", { description: error.message });
-  }, []);
+    if (error) toast.error(t("auth.signInFailed"), { description: error.message });
+  }, [t]);
 
   const signOut = useCallback(async () => {
     await getSupabase().auth.signOut();
-    toast.success("Signed out");
-  }, []);
+    toast.success(t("auth.signedOut"));
+  }, [t]);
 
   // run now if signed in, otherwise prompt and remember what to finish after login
   const requireAuth = useCallback(

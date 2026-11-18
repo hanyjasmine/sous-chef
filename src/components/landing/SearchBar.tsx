@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { copy } from "@/data/copy";
 import { ApiError, createSearch } from "@/lib/api";
 import { SuggestedQueries } from "./SuggestedQueries";
+import { useTranslation } from "react-i18next";
 
 export function SearchBar() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [query, setQuery] = useState("");
   const [pending, setPending] = useState(false);
 
@@ -26,8 +27,8 @@ export function SearchBar() {
       router.push(`/search/${sessionId}`);
     } catch (e) {
       setPending(false);
-      toast.error("Search didn't go through", {
-        description: e instanceof ApiError ? e.message : "Is sous-svc running?",
+      toast.error(t("landing.searchFailed"), {
+        description: e instanceof ApiError ? e.message : t("landing.svcDown"),
       });
     }
   }
@@ -45,15 +46,15 @@ export function SearchBar() {
           autoFocus
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={copy.searchPlaceholder}
-          aria-label="Search recipes"
+          placeholder={t("landing.searchPlaceholder")}
+          aria-label={t("landing.searchLabel")}
           className="h-10 min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground"
         />
         <Button
           type="submit"
           size="icon-lg"
           disabled={!query.trim() || pending}
-          aria-label="Search"
+          aria-label={t("landing.searchSubmit")}
           className="rounded-full"
         >
           {pending ? <LoaderIcon className="animate-spin" /> : <ArrowUpIcon />}

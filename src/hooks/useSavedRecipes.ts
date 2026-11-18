@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { listSaved, saveRecipe, unsaveRecipe } from "@/lib/api";
 import type { Recipe } from "@/types";
 import { useAuth } from "./useAuth";
+import { useTranslation } from "react-i18next";
 
 interface SavedState {
   userId: string;
@@ -13,6 +14,7 @@ interface SavedState {
 
 export function useSavedRecipes() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [state, setState] = useState<SavedState | null>(null);
 
   useEffect(() => {
@@ -23,12 +25,12 @@ export function useSavedRecipes() {
         if (!cancelled) setState({ userId: user.id, recipes });
       })
       .catch(() => {
-        if (!cancelled) toast.error("Couldn't load your saved recipes");
+        if (!cancelled) toast.error(t("saved.loadFailed"));
       });
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, t]);
 
   // ignore a list that belongs to a previous user
   const recipes = user && state?.userId === user.id ? state.recipes : null;
@@ -52,13 +54,13 @@ export function useSavedRecipes() {
       );
       try {
         await saveRecipe(recipe.id);
-        toast.success(`Saved ${recipe.title}`);
+        toast.success(t("saved.saved", { title: recipe.title }));
       } catch {
         update((prev) => prev.filter((r) => r.id !== recipe.id));
-        toast.error("Couldn't save that recipe");
+        toast.error(t("saved.saveFailed"));
       }
     },
-    [update],
+    [update, t],
   );
 
   const unsave = useCallback(
@@ -68,10 +70,10 @@ export function useSavedRecipes() {
         await unsaveRecipe(recipe.id);
       } catch {
         update((prev) => [recipe, ...prev]);
-        toast.error("Couldn't remove that recipe");
+        toast.error(t("saved.removeFailed"));
       }
     },
-    [update],
+    [update, t],
   );
 
   return { recipes, savedIds, save, unsave };

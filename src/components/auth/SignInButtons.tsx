@@ -3,9 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 export function SignInButtons({ className }: { className?: string }) {
   const { signIn } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <div className={cn("flex w-full gap-2", className)}>
@@ -15,7 +17,7 @@ export function SignInButtons({ className }: { className?: string }) {
         onClick={() => signIn("google")}
       >
         <GoogleIcon data-icon="inline-start" />
-        Continue with Google
+        {t("auth.continueWithGoogle")}
       </Button>
     </div>
   );

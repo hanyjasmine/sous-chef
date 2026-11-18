@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Recipe } from "@/types";
 import { RecipeMeta } from "./RecipeMeta";
 import { RecipeThumbnail } from "./RecipeThumbnail";
+import { useTranslation } from "react-i18next";
 
 interface RecipeFullscreenProps {
   recipe: Recipe | null;
@@ -19,6 +20,7 @@ interface RecipeFullscreenProps {
 }
 
 export function RecipeFullscreen({ recipe, onClose }: RecipeFullscreenProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={recipe !== null} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="flex h-[min(90dvh,56rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-3xl">
@@ -43,7 +45,7 @@ export function RecipeFullscreen({ recipe, onClose }: RecipeFullscreenProps) {
 
               <div className="grid gap-8 md:grid-cols-[1fr_1.6fr]">
                 <section>
-                  <h3 className="mb-2 font-heading text-lg">Ingredients</h3>
+                  <h3 className="mb-2 font-heading text-lg">{t("recipe.ingredients")}</h3>
                   <ul className="flex list-disc flex-col gap-1.5 pl-5 text-base marker:text-highlight">
                     {recipe.ingredients.map((ing, i) => (
                       // spoonacular can list an ingredient twice (e.g. split across sauce and topping)
@@ -57,7 +59,7 @@ export function RecipeFullscreen({ recipe, onClose }: RecipeFullscreenProps) {
                   </ul>
                 </section>
                 <section>
-                  <h3 className="mb-2 font-heading text-lg">Steps</h3>
+                  <h3 className="mb-2 font-heading text-lg">{t("recipe.steps")}</h3>
                   <ol className="flex flex-col gap-3 text-base leading-relaxed">
                     {recipe.steps.map((step, i) => (
                       <li key={i} className="flex gap-3">
@@ -78,7 +80,7 @@ export function RecipeFullscreen({ recipe, onClose }: RecipeFullscreenProps) {
                   rel="noreferrer"
                   className="flex items-center gap-1 text-sm text-muted-foreground underline-offset-4 hover:underline"
                 >
-                  View original recipe
+                  {t("recipe.viewOriginal")}
                   <ExternalLinkIcon className="size-3.5" />
                 </a>
               )}

@@ -16,10 +16,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslation } from "react-i18next";
 
 export function NavBar() {
   const { user, ready, signOut, requireAuth } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b px-4">
@@ -28,13 +30,13 @@ export function NavBar() {
         className="flex items-center gap-2 font-heading text-xl font-semibold"
       >
         <Image src="/logo.png" alt="" width={32} height={32} className="rounded-lg" />
-        Sous
+        {t("brand")}
       </Link>
       {!ready ? null : user ? (
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <Button variant="ghost" size="icon" aria-label="Account menu" />
+              <Button variant="ghost" size="icon" aria-label={t("auth.accountMenu")} />
             }
           >
             <Avatar className="size-8">
@@ -53,17 +55,17 @@ export function NavBar() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/saved")}>
               <BookmarkIcon />
-              Saved recipes
+              {t("nav.savedRecipes")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={signOut}>
               <LogOutIcon />
-              Sign out
+              {t("auth.signOut")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
         <Button variant="ghost" size="sm" onClick={() => requireAuth(() => {})}>
-          Sign in
+          {t("auth.signIn")}
         </Button>
       )}
     </header>

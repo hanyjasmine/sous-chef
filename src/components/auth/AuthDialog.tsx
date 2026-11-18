@@ -7,8 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { copy } from "@/data/copy";
 import { SignInButtons } from "./SignInButtons";
+import { useTranslation } from "react-i18next";
 
 interface AuthDialogProps {
   open: boolean;
@@ -16,14 +16,15 @@ interface AuthDialogProps {
 }
 
 export function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle className="font-heading text-xl">
-            {copy.authDialogTitle}
+            {t("auth.dialogTitle")}
           </DialogTitle>
-          <DialogDescription>{copy.authDialogBody}</DialogDescription>
+          <DialogDescription>{t("auth.dialogBody")}</DialogDescription>
         </DialogHeader>
         <SignInButtons className="flex-col" />
       </DialogContent>

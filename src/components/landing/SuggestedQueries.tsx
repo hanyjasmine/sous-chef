@@ -1,12 +1,15 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { suggestions } from "@/data/suggestions";
 
 export function SuggestedQueries({ onPick }: { onPick: (q: string) => void }) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-wrap justify-center gap-2">
-      {suggestions.map((s) => (
+      {suggestions.map((key) => t(key)).map((s) => (
         <Button
           key={s}
           variant="ghost"

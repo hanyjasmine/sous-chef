@@ -14,6 +14,7 @@ import type { Recipe } from "@/types";
 import { RecipeMeta } from "./RecipeMeta";
 import { RecipePreview } from "./RecipePreview";
 import { RecipeThumbnail } from "./RecipeThumbnail";
+import { useTranslation } from "react-i18next";
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -29,6 +30,7 @@ export function RecipeCard({
   onOpenFullscreen,
 }: RecipeCardProps) {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <Collapsible
@@ -63,7 +65,7 @@ export function RecipeCard({
           <Button
             variant="ghost"
             size="icon-sm"
-            aria-label={saved ? "Remove from saved" : "Save recipe"}
+            aria-label={saved ? t("recipe.unsave") : t("recipe.save")}
             aria-pressed={saved}
             onClick={(e) => {
               e.stopPropagation();
@@ -75,7 +77,7 @@ export function RecipeCard({
           <CollapsibleTrigger
             onClick={(e) => e.stopPropagation()}
             render={
-              <Button variant="ghost" size="icon-sm" aria-label="Preview" />
+              <Button variant="ghost" size="icon-sm" aria-label={t("recipe.preview")} />
             }
           >
             <ChevronDownIcon className="transition-transform group-data-[open]/card:rotate-180" />

@@ -4,6 +4,7 @@ import { ArrowUpIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslation } from "react-i18next";
 
 interface ChatInputProps {
   disabled?: boolean;
@@ -12,6 +13,7 @@ interface ChatInputProps {
 
 export function ChatInput({ disabled, onSend }: ChatInputProps) {
   const [text, setText] = useState("");
+  const { t } = useTranslation();
 
   function send() {
     const trimmed = text.trim();
@@ -38,7 +40,7 @@ export function ChatInput({ disabled, onSend }: ChatInputProps) {
             send();
           }
         }}
-        placeholder="Add details or change direction…"
+        placeholder={t("chat.placeholder")}
         rows={1}
         className="max-h-40 min-h-10 resize-none"
       />
@@ -46,7 +48,7 @@ export function ChatInput({ disabled, onSend }: ChatInputProps) {
         type="submit"
         size="icon"
         disabled={!text.trim() || disabled}
-        aria-label="Send"
+        aria-label={t("chat.send")}
       >
         <ArrowUpIcon />
       </Button>

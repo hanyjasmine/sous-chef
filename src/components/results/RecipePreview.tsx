@@ -2,6 +2,7 @@ import { Maximize2Icon, ShoppingCartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { Recipe } from "@/types";
+import { useTranslation } from "react-i18next";
 
 const PREVIEW_INGREDIENTS = 5;
 
@@ -11,6 +12,7 @@ interface RecipePreviewProps {
 }
 
 export function RecipePreview({ recipe, onOpenFullscreen }: RecipePreviewProps) {
+  const { t } = useTranslation();
   const extra = recipe.ingredients.length - PREVIEW_INGREDIENTS;
 
   return (
@@ -19,7 +21,7 @@ export function RecipePreview({ recipe, onOpenFullscreen }: RecipePreviewProps) 
       <p className="text-sm text-muted-foreground">{recipe.summary}</p>
       <div>
         <h4 className="mb-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-          Ingredients
+          {t("recipe.ingredients")}
         </h4>
         <ul className="list-disc pl-5 text-sm marker:text-highlight">
           {recipe.ingredients.slice(0, PREVIEW_INGREDIENTS).map((ing, i) => (
@@ -31,19 +33,19 @@ export function RecipePreview({ recipe, onOpenFullscreen }: RecipePreviewProps) 
             </li>
           ))}
           {extra > 0 && (
-            <li className="list-none text-muted-foreground">+ {extra} more</li>
+            <li className="list-none text-muted-foreground">{t("recipe.moreIngredients", { count: extra })}</li>
           )}
         </ul>
       </div>
       <div className="flex gap-2">
         <Button size="sm" onClick={onOpenFullscreen}>
           <Maximize2Icon data-icon="inline-start" />
-          Full recipe
+          {t("recipe.fullRecipe")}
         </Button>
         {/* shopping list sms lands in milestone 6 */}
         <Button size="sm" variant="outline" disabled>
           <ShoppingCartIcon data-icon="inline-start" />
-          Shopping list
+          {t("recipe.shoppingList")}
         </Button>
       </div>
     </div>
