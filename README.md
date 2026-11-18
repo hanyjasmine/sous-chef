@@ -2,8 +2,7 @@
 
 <div align="center">
   <h1>
-    <img src="public/logo.png" alt="Sous logo" width="48" height="48" align="center">
-    Sous
+    <img src="public/logo.png" alt="Sous logo" width="48" height="48" align="absmiddle">&nbsp;Sous
   </h1>
 
   <p>
