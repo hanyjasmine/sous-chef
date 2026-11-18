@@ -40,6 +40,8 @@ export interface ResultsPage {
   total: number;
   poolSize: number;
   narrowed: boolean;
+  // web results are still being fetched in the background
+  webPending: boolean;
 }
 
 // recipes holds every page loaded so far

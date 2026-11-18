@@ -17,6 +17,7 @@ interface ResultListProps {
   emptyMessage?: string;
   hasMore?: boolean;
   loadingMore?: boolean;
+  webPending?: boolean;
   onLoadMore?: () => void;
 }
 
@@ -28,6 +29,7 @@ export function ResultList({
   emptyMessage,
   hasMore,
   loadingMore,
+  webPending,
   onLoadMore,
 }: ResultListProps) {
   const { t } = useTranslation();
@@ -60,12 +62,12 @@ export function ResultList({
       </div>
       <ScrollArea className="min-h-0 flex-1">
         <div className="flex flex-col gap-3 p-4">
-          {recipes?.length === 0 && (
+          {recipes?.length === 0 && !webPending && (
             <p className="py-12 text-center text-sm text-muted-foreground">
               {emptyMessage ?? t("search.noResults")}
             </p>
           )}
-          {recipes
+          {recipes && (recipes.length > 0 || !webPending)
             ? recipes.map((recipe) => (
                 <RecipeCard
                   key={recipe.id}
@@ -78,6 +80,12 @@ export function ResultList({
             : Array.from({ length: 4 }, (_, i) => (
                 <Skeleton key={i} className="h-[106px] rounded-2xl" />
               ))}
+          {webPending && recipes && recipes.length > 0 && (
+            <p className="flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground">
+              <span className="size-1.5 animate-typing rounded-full bg-muted-foreground" />
+              {t("search.findingMore")}
+            </p>
+          )}
           {hasMore && (
             <div ref={sentinelRef} className="flex justify-center py-2">
               {loadingMore ? (

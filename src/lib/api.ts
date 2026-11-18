@@ -81,9 +81,9 @@ export async function getSearchSession(id: string): Promise<SearchSession> {
   return session;
 }
 
-export function getResults(id: string, cursor: number) {
+export function getResults(id: string, cursor: number, limit = 10) {
   return request<ResultsPage>(
-    `/sessions/${encodeURIComponent(id)}/results?cursor=${cursor}`,
+    `/sessions/${encodeURIComponent(id)}/results?cursor=${cursor}&limit=${limit}`,
   );
 }
 

@@ -28,6 +28,8 @@ export function RecipeThumbnail({
           sizes={sizes}
           // spoonacular tops out at 636px, re-encoding it through the optimizer only softens it
           unoptimized
+          // some recipe sites block hotlinked images that carry a referrer
+          referrerPolicy="no-referrer"
           className="object-cover"
         />
       ) : (

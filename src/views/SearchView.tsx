@@ -20,6 +20,8 @@ import { ApiError, cacheSession, getResults, getSearchSession } from "@/lib/api"
 import { takePendingAction } from "@/lib/pendingAction";
 import type { Recipe, ResultsPage, SearchSession } from "@/types";
 
+const POLL_MS = 3000;
+
 interface SearchViewProps {
   params: Promise<{ sessionId: string }>;
 }
@@ -74,6 +76,35 @@ export function SearchView({ params }: SearchViewProps) {
     handleResults,
   );
 
+  const sessionRef = useRef(session);
+  useEffect(() => {
+    sessionRef.current = session;
+  }, [session]);
+
+  // web results land in the background, poll until they're in
+  const webPending = session?.webPending ?? false;
+  useEffect(() => {
+    if (!webPending) return;
+    const timer = setInterval(async () => {
+      const current = sessionRef.current;
+      if (!current) return;
+      const version = versionRef.current;
+      try {
+        const page = await getResults(sessionId, current.recipes.length, 30);
+        if (version !== versionRef.current) return;
+        setSession((s) => {
+          if (!s) return s;
+          const seen = new Set(s.recipes.map((r) => r.id));
+          const fresh = page.recipes.filter((r) => !seen.has(r.id));
+          return { ...s, ...page, recipes: [...s.recipes, ...fresh] };
+        });
+      } catch {
+        // try again on the next tick
+      }
+    }, POLL_MS);
+    return () => clearInterval(timer);
+  }, [webPending, sessionId]);
+
   async function loadMore() {
     if (!session || session.nextCursor === null || loadingMore) return;
     const version = versionRef.current;
@@ -114,7 +145,9 @@ export function SearchView({ params }: SearchViewProps) {
     <ResultList
       key={resultsVersion}
       heading={
-        session ? (
+        session?.webPending && session.total === 0 ? (
+          t("search.searchingWeb")
+        ) : session ? (
           <Trans
             i18nKey={session.narrowed ? "search.headingNarrowed" : "search.heading"}
             count={session.total}
@@ -129,6 +162,7 @@ export function SearchView({ params }: SearchViewProps) {
       savedIds={savedIds}
       onToggleSave={handleToggleSave}
       hasMore={session?.nextCursor != null}
+      webPending={session?.webPending ?? false}
       loadingMore={loadingMore}
       onLoadMore={loadMore}
     />

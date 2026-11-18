@@ -35,6 +35,8 @@
   },
   "search": {
     "searching": "Searching…",
+    "searchingWeb": "Searching the web for recipes…",
+    "findingMore": "Finding more recipes from around the web…",
     "heading_one": "{{count}} recipe for <query>“{{query}}”</query>",
     "heading_other": "{{count}} recipes for <query>“{{query}}”</query>",
     "headingNarrowed_one": "{{count}} of {{pool}} recipes for <query>“{{query}}”</query>",
