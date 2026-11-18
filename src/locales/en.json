@@ -37,10 +37,14 @@
     "searching": "Searching…",
     "heading_one": "{{count}} recipe for <query>“{{query}}”</query>",
     "heading_other": "{{count}} recipes for <query>“{{query}}”</query>",
+    "headingNarrowed_one": "{{count}} of {{pool}} recipes for <query>“{{query}}”</query>",
+    "headingNarrowed_other": "{{count}} of {{pool}} recipes for <query>“{{query}}”</query>",
     "noResults": "No recipes matched. Try fewer constraints, or tell Sous what to loosen in the chat.",
     "sessionExpired": "This search has expired. Search results are kept for an hour, so start a fresh one.",
     "sessionLoadFailed": "Couldn't load this search. Check that sous-svc is running.",
     "startNew": "Start a new search",
+    "loadMore": "Load more",
+    "loadMoreFailed": "Couldn't load more recipes",
     "tabs": {
       "results": "Results",
       "chat": "Chat"
@@ -48,11 +52,11 @@
     "attribution": "Recipe data from <link>spoonacular</link>"
   },
   "chat": {
-    "greeting": "Thanks for choosing Sous! Looks like you're after \"{{query}}\". Any dietary needs, a time limit, or ingredients you want to use up?",
-    "mockReply": "Chat isn't connected yet. Once sous-svc is wired up, I'll narrow these results or run a new search based on what you tell me.",
     "placeholder": "Add details or change direction…",
     "send": "Send",
-    "typing": "Sous is typing"
+    "typing": "Sous is typing",
+    "failed": "Sous couldn't reply. Try again in a moment.",
+    "loadFailed": "Couldn't load the conversation"
   },
   "recipe": {
     "minutes": "{{count}} min",

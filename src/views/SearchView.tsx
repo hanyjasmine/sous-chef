@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { ChatPanel } from "@/components/chat";
 import { NavBar } from "@/components/navigation";
 import { ResultList } from "@/components/results";
@@ -13,10 +14,11 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { useAuth } from "@/hooks/useAuth";
+import { useChat } from "@/hooks/useChat";
 import { useSavedRecipes } from "@/hooks/useSavedRecipes";
-import { ApiError, getSearchSession } from "@/lib/api";
+import { ApiError, cacheSession, getResults, getSearchSession } from "@/lib/api";
 import { takePendingAction } from "@/lib/pendingAction";
-import type { ChatMessage, Recipe, SearchSession } from "@/types";
+import type { Recipe, ResultsPage, SearchSession } from "@/types";
 
 interface SearchViewProps {
   params: Promise<{ sessionId: string }>;
@@ -29,22 +31,18 @@ export function SearchView({ params }: SearchViewProps) {
   const { recipes: savedRecipes, savedIds, save, unsave } = useSavedRecipes();
 
   const [session, setSession] = useState<SearchSession | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [pending, setPending] = useState(false);
   const [mobileTab, setMobileTab] = useState<"results" | "chat">("results");
   const [error, setError] = useState<string | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  // bumps when chat swaps the results, so stale pages get dropped
+  const [resultsVersion, setResultsVersion] = useState(0);
+  const versionRef = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
     getSearchSession(sessionId)
       .then((s) => {
-        if (cancelled) return;
-        setSession(s);
-        // the query is the first message, sous greets back
-        setMessages([
-          { id: "q", role: "user", content: s.query },
-          { id: "greet", role: "assistant", content: t("chat.greeting", { query: s.query }) },
-        ]);
+        if (!cancelled) setSession(s);
       })
       .catch((e) => {
         if (cancelled) return;
@@ -59,20 +57,41 @@ export function SearchView({ params }: SearchViewProps) {
     };
   }, [sessionId, t]);
 
-  function handleSend(text: string) {
-    setMessages((m) => [
-      ...m,
-      { id: crypto.randomUUID(), role: "user", content: text },
-    ]);
-    setPending(true);
-    // canned reply until /chat streams from sous-svc
-    setTimeout(() => {
-      setMessages((m) => [
-        ...m,
-        { id: crypto.randomUUID(), role: "assistant", content: t("chat.mockReply") },
-      ]);
-      setPending(false);
-    }, 600);
+  // write through so back/forward and reloads show the latest view
+  useEffect(() => {
+    if (session) cacheSession(session);
+  }, [session]);
+
+  const handleResults = useCallback((page: ResultsPage) => {
+    versionRef.current += 1;
+    setResultsVersion(versionRef.current);
+    setSession((s) => s && { ...s, ...page });
+  }, []);
+
+  const { messages, pending, send } = useChat(
+    sessionId,
+    session?.query ?? null,
+    handleResults,
+  );
+
+  async function loadMore() {
+    if (!session || session.nextCursor === null || loadingMore) return;
+    const version = versionRef.current;
+    setLoadingMore(true);
+    try {
+      const page = await getResults(sessionId, session.nextCursor);
+      if (version !== versionRef.current) return;
+      setSession((s) => {
+        if (!s) return s;
+        const seen = new Set(s.recipes.map((r) => r.id));
+        const fresh = page.recipes.filter((r) => !seen.has(r.id));
+        return { ...s, ...page, recipes: [...s.recipes, ...fresh] };
+      });
+    } catch {
+      toast.error(t("search.loadMoreFailed"));
+    } finally {
+      setLoadingMore(false);
+    }
   }
 
   // finish a save the user started as a guest, once they're back from google
@@ -93,12 +112,13 @@ export function SearchView({ params }: SearchViewProps) {
 
   const results = (
     <ResultList
+      key={resultsVersion}
       heading={
         session ? (
           <Trans
-            i18nKey="search.heading"
-            count={session.recipes.length}
-            values={{ query: session.query }}
+            i18nKey={session.narrowed ? "search.headingNarrowed" : "search.heading"}
+            count={session.total}
+            values={{ query: session.query, pool: session.poolSize }}
             components={{ query: <span className="text-foreground" /> }}
           />
         ) : (
@@ -108,11 +128,12 @@ export function SearchView({ params }: SearchViewProps) {
       recipes={session?.recipes ?? null}
       savedIds={savedIds}
       onToggleSave={handleToggleSave}
+      hasMore={session?.nextCursor != null}
+      loadingMore={loadingMore}
+      onLoadMore={loadMore}
     />
   );
-  const chat = (
-    <ChatPanel messages={messages} pending={pending} onSend={handleSend} />
-  );
+  const chat = <ChatPanel messages={messages} pending={pending} onSend={send} />;
 
   if (error) {
     return (

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Recipe } from "@/types";
@@ -14,6 +15,9 @@ interface ResultListProps {
   savedIds: Set<string>;
   onToggleSave: (recipe: Recipe) => void;
   emptyMessage?: string;
+  hasMore?: boolean;
+  loadingMore?: boolean;
+  onLoadMore?: () => void;
 }
 
 export function ResultList({
@@ -22,9 +26,32 @@ export function ResultList({
   savedIds,
   onToggleSave,
   emptyMessage,
+  hasMore,
+  loadingMore,
+  onLoadMore,
 }: ResultListProps) {
   const { t } = useTranslation();
   const [fullscreen, setFullscreen] = useState<Recipe | null>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const loadMoreRef = useRef(onLoadMore);
+
+  useEffect(() => {
+    loadMoreRef.current = onLoadMore;
+  }, [onLoadMore]);
+
+  // fetch the next page as the end of the list scrolls into view
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) loadMoreRef.current?.();
+      },
+      { rootMargin: "400px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore]);
 
   return (
     <div className="flex h-full min-h-0 flex-col">
@@ -51,6 +78,17 @@ export function ResultList({
             : Array.from({ length: 4 }, (_, i) => (
                 <Skeleton key={i} className="h-[106px] rounded-2xl" />
               ))}
+          {hasMore && (
+            <div ref={sentinelRef} className="flex justify-center py-2">
+              {loadingMore ? (
+                <Skeleton className="h-[106px] w-full rounded-2xl" />
+              ) : (
+                <Button variant="ghost" size="sm" onClick={onLoadMore}>
+                  {t("search.loadMore")}
+                </Button>
+              )}
+            </div>
+          )}
           {/* backlink required by the spoonacular free plan */}
           {recipes?.some((r) => r.source === "spoonacular") && (
             <p className="pt-2 text-center text-xs text-muted-foreground">

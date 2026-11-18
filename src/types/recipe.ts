@@ -33,9 +33,18 @@ export interface SearchFilters {
   max_ready_minutes: number | null;
 }
 
-export interface SearchSession {
+// one page of the current view; the view is the whole pool or a chat-narrowed subset
+export interface ResultsPage {
+  recipes: Recipe[];
+  nextCursor: number | null;
+  total: number;
+  poolSize: number;
+  narrowed: boolean;
+}
+
+// recipes holds every page loaded so far
+export interface SearchSession extends ResultsPage {
   id: string;
   query: string;
   filters?: SearchFilters;
-  recipes: Recipe[];
 }
