@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLinkIcon } from "lucide-react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,10 +20,18 @@ interface RecipeFullscreenProps {
   onClose: () => void;
 }
 
-export function RecipeFullscreen({ recipe, onClose }: RecipeFullscreenProps) {
+export function RecipeFullscreen({ recipe: current, onClose }: RecipeFullscreenProps) {
   const { t } = useTranslation();
+  // keep showing the last recipe while the dialog animates closed
+  const [recipe, setRecipe] = useState(current);
+  if (current && current !== recipe) setRecipe(current);
+
   return (
-    <Dialog open={recipe !== null} onOpenChange={(open) => !open && onClose()}>
+    <Dialog
+      open={current !== null}
+      onOpenChange={(open) => !open && onClose()}
+      onOpenChangeComplete={(open) => !open && setRecipe(null)}
+    >
       <DialogContent className="flex h-[min(90dvh,56rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-3xl">
         {recipe && (
           <ScrollArea className="min-h-0 flex-1">

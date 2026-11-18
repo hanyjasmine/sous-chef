@@ -26,8 +26,11 @@ export function RecipeThumbnail({
           alt=""
           fill
           sizes={sizes}
-          // spoonacular tops out at 636px, re-encoding it through the optimizer only softens it
-          unoptimized
+          // spoonacular tops out at 636px, re-encoding it only softens it, but web
+          // images can be 4000px originals that stall the main thread while decoding
+          unoptimized={
+            recipe.source === "spoonacular" || !recipe.imageUrl.startsWith("https://")
+          }
           // some recipe sites block hotlinked images that carry a referrer
           referrerPolicy="no-referrer"
           className="object-cover"

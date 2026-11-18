@@ -17,7 +17,9 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "img.spoonacular.com" }],
+    // web recipes link images from any site, often multi-megabyte originals,
+    // so they go through the optimizer (next 16 refuses private ips by default)
+    remotePatterns: [{ protocol: "https", hostname: "**" }],
   },
   // proxy browser calls to sous-svc so there's no cors and the svc url stays private
   async rewrites() {

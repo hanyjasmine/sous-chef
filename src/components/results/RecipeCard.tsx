@@ -1,7 +1,7 @@
 "use client";
 
 import { BookmarkIcon, ChevronDownIcon } from "lucide-react";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +23,8 @@ interface RecipeCardProps {
   onOpenFullscreen: (recipe: Recipe) => void;
 }
 
-export function RecipeCard({
+// memoized so opening the fullscreen dialog doesn't re-render the whole list
+export const RecipeCard = memo(function RecipeCard({
   recipe,
   saved,
   onToggleSave,
@@ -92,4 +93,4 @@ export function RecipeCard({
       </CollapsibleContent>
     </Collapsible>
   );
-}
+});
