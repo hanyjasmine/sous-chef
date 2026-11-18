@@ -4,3 +4,4 @@ export * from "./RecipeMeta";
 export * from "./RecipePreview";
 export * from "./RecipeThumbnail";
 export * from "./ResultList";
+export * from "./ShoppingListButton";

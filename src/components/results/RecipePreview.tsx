@@ -1,8 +1,9 @@
-import { Maximize2Icon, ShoppingCartIcon } from "lucide-react";
+import { Maximize2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { Recipe } from "@/types";
 import { useTranslation } from "react-i18next";
+import { ShoppingListButton } from "./ShoppingListButton";
 
 const PREVIEW_INGREDIENTS = 5;
 
@@ -42,11 +43,7 @@ export function RecipePreview({ recipe, onOpenFullscreen }: RecipePreviewProps) 
           <Maximize2Icon data-icon="inline-start" />
           {t("recipe.fullRecipe")}
         </Button>
-        {/* shopping list sms lands in milestone 6 */}
-        <Button size="sm" variant="outline" disabled>
-          <ShoppingCartIcon data-icon="inline-start" />
-          {t("recipe.shoppingList")}
-        </Button>
+        <ShoppingListButton recipe={recipe} />
       </div>
     </div>
   );

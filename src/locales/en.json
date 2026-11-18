@@ -24,7 +24,7 @@
     "signedOut": "Signed out",
     "signInFailed": "Couldn't start sign-in",
     "continueWithGoogle": "Continue with Google",
-    "signInPrompt": "Sign in to save recipes and send shopping lists to your phone",
+    "signInPrompt": "Sign in to save recipes and pick up where you left off",
     "signedInAs": "Signed in as {{name}}",
     "dialogTitle": "Sign in to save recipes",
     "dialogBody": "Searching is free for everyone. Sign in to bookmark recipes and pick up where you left off.",
@@ -83,5 +83,17 @@
     "loadFailed": "Couldn't load your saved recipes",
     "saveFailed": "Couldn't save that recipe",
     "removeFailed": "Couldn't remove that recipe"
+  },
+  "shopping": {
+    "title": "Shopping list",
+    "hint": "For {{title}}. Uncheck anything you already have.",
+    "otherAisle": "Other",
+    "messageHeading": "Shopping list for {{title}}",
+    "text": "Text it",
+    "share": "Share",
+    "copy": "Copy",
+    "copied": "Shopping list copied",
+    "copyFailed": "Couldn't copy the list",
+    "shareFailed": "Couldn't share the list"
   }
 }

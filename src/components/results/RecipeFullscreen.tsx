@@ -13,6 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Recipe } from "@/types";
 import { RecipeMeta } from "./RecipeMeta";
 import { RecipeThumbnail } from "./RecipeThumbnail";
+import { ShoppingListButton } from "./ShoppingListButton";
 import { useTranslation } from "react-i18next";
 
 interface RecipeFullscreenProps {
@@ -54,7 +55,10 @@ export function RecipeFullscreen({ recipe: current, onClose }: RecipeFullscreenP
 
               <div className="grid gap-8 md:grid-cols-[1fr_1.6fr]">
                 <section>
-                  <h3 className="mb-2 font-heading text-lg">{t("recipe.ingredients")}</h3>
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <h3 className="font-heading text-lg">{t("recipe.ingredients")}</h3>
+                    <ShoppingListButton recipe={recipe} variant="ghost" />
+                  </div>
                   <ul className="flex list-disc flex-col gap-1.5 pl-5 text-base marker:text-highlight">
                     {recipe.ingredients.map((ing, i) => (
                       // spoonacular can list an ingredient twice (e.g. split across sauce and topping)
